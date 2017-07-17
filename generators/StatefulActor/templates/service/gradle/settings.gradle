@@ -1,0 +1,3 @@
+include ':<%= interfaceProjName %>'
+
+project(':<%= interfaceProjName %>').projectDir = new File(settingsDir, '../<%= interfaceProjName %>')

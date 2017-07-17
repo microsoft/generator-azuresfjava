@@ -1,0 +1,56 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+     java.srcDirs = ['src']
+     output.classesDir = 'out/classes'
+      resources {
+       srcDirs = ['src']
+     }
+   }
+}
+
+dependencies {
+    compile fileTree(dir: "<%= libPath %>", include: ['*.jar'])
+	compile project(':<%= interfaceProjName %>')
+}
+
+clean.doFirst {
+	delete "${rootDir}/out"
+}
+
+jar {
+    manifest {
+    attributes(
+                'Main-Class': '<%= serviceMainClass %>',
+                "Class-Path": configurations.compile.collect { 'lib/' + it.getName() }.join(' '))
+    baseName "<%= serviceJarName %>"
+    destinationDir = file('../<%= appPackage %>/<%= servicePackage %>/Code')
+}
+}
+task copyDeps<< {
+	copy {
+		from("<%= libPath %>")
+		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+		include('*.jar')
+	}
+	copy {
+		from("<%= libPath %>")
+		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+		include('*.so')
+	}
+	copy {
+		from("<%= libPath %>")
+		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+		include('*.dll')
+	}
+	copy {
+		from("../<%= interfaceProjName %>/out/lib")
+		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+		include('*.jar')
+	}
+}
+
+
+defaultTasks 'clean', 'jar', 'copyDeps'

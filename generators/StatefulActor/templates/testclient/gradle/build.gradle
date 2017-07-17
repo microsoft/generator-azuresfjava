@@ -1,0 +1,58 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+	java.srcDirs = ['src']
+    output.classesDir = 'out/classes'
+    resources {
+		srcDirs = ['src']
+    }
+   }
+}
+
+dependencies {
+    compile fileTree(dir: "<%= libPath %>", include: ['*.jar'])
+	compile project(':<%= interfaceProjName %>')    
+}
+
+clean.doFirst {
+    println "Cleaning"
+	delete "${rootDir}/out"
+}
+
+jar 
+{
+	manifest {
+    attributes(
+		'Main-Class': '<%= testClassFQN %>',
+		"Class-Path": configurations.compile.collect { 'lib/' + it.getName() }.join(' '))
+	baseName "<%= testClientJarName %>"
+    destinationDir = file('./out/lib')
+	}
+}
+
+task copyDeps<< {
+        copy {
+                from("<%= libPath %>")
+                into("./out/lib/lib")
+                include('*.jar')
+        }
+        copy {
+                from("<%= libPath %>")
+                into("./out/lib/lib")
+                include('*.so')
+        }
+        copy {
+                from("<%= libPath %>")
+                into("./out/lib/lib")
+                include('*.dll')
+        }
+        copy {
+                from("../<%= interfaceProjName %>/out/lib")
+                into("./out/lib/lib")
+                include('*.jar')
+        }
+}
+
+defaultTasks 'clean', 'jar', 'copyDeps'
