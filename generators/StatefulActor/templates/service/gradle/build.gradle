@@ -27,7 +27,7 @@ configurations {
 }
 
 dependencies {
-    compile project('<%= interfaceProjName %>')
+    compile project(':<%= interfaceProjName %>')
     azuresf ('com.microsoft.azure.servicefabric:actors-preview:1.0.0')
     compile fileTree(dir: 'lib', include: '*.jar')
 }
