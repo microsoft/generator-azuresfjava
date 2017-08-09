@@ -19,6 +19,9 @@ Then generate your new project:
 yo azuresfjava
 ```
 
+You can have a look at our [documentation](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-create-your-first-linux-application-with-java) to understand how can you build and deploy the generated Service Fabric Java application.
+
+
 ## Getting To Know Yeoman
 
  * Yeoman has a heart of gold.
@@ -45,3 +48,15 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Contribution Steps
+
+Once you have figured out all the legalities above, you can follow the steps below - 
+
+* Create a fork of this [repository](https://github.com/Azure/generator-azuresfjava)
+* Git clone the forked repository to your development box
+* Make the changes
+* You can update your local Yeo using ```npm link``` (or ```sudo npm link``` as required) at the project root-level
+* Create a new project with ```yo azuresfjava``` (ensure it picks from your changes)
+* Validate that changes are working as expected and not breaking anything regressively - following the steps mentioned in the [documentation](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-create-your-first-linux-application-with-java)
+* Raise a pull request and share with us 
