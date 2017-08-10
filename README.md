@@ -1,5 +1,5 @@
 
-# generator-azure-node
+# generator-azuresfjava
 > Yeoman generator for Azure Service Fabric Java projects
 
 ## Installation
@@ -58,5 +58,5 @@ Once you have figured out all the legalities above, you can follow the steps bel
 * Make the changes
 * You can update your local Yeo using ```npm link``` (or ```sudo npm link``` as required) at the project root-level
 * Create a new project with ```yo azuresfjava``` (ensure it picks from your changes)
-* Validate that changes are working as expected and not breaking anything regressively - following the steps mentioned in the [documentation](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-create-your-first-linux-application-with-java)
+* Validate that changes are working as expected and not breaking anything regressively - following the steps mentioned in the [documentation](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-create-your-first-linux-application-with-java) by creating, building and deploying the generated project on a Service Fabric cluster
 * Raise a pull request and share with us 
