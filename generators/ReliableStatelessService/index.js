@@ -210,32 +210,6 @@ var ClassGenerator = generators.Base.extend({
         } 
       );
     }
-    if ( this.isAddNewService == false ) {
-      this.fs.copyTpl(
-        this.templatePath('deploy/install-sfctl.sh'),
-        this.destinationPath(path.join(this.props.projName, 'install-sfctl.sh')),
-        {
-          appPackage: appPackage,
-          appName: appName,
-          appTypeName: appTypeName,
-          serviceName: serviceName,
-          serviceTypeName: serviceTypeName
-        } 
-      );
-    }
-    if ( this.isAddNewService == false ) {
-      this.fs.copyTpl(
-        this.templatePath('deploy/uninstall-sfctl.sh'),
-        this.destinationPath(path.join(this.props.projName, 'uninstall-sfctl.sh')),
-        {
-          appPackage: appPackage,
-          appName: appName,
-          appTypeName: appTypeName,
-          serviceName: serviceName,
-          serviceTypeName: serviceTypeName
-        } 
-      );
-    }
     
     this.template('app/appPackage/servicePackage/Code/_readme.txt', path.join(appPackagePath, servicePackage, 'Code', '_readme.txt'));
     this.template('app/appPackage/servicePackage/Config/_readme.txt', path.join(appPackagePath, servicePackage, 'Config', '_readme.txt'));
