@@ -11,22 +11,46 @@ sourceSets {
    }
 }
 
-dependencies {
-    compile fileTree(dir: "<%= libPath %>", include: ['*.jar'])
-	compile project(':<%= interfaceProjName %>')    
+clean.doFirst {
+    delete "${projectDir}/out"
+    delete "${projectDir}/lib"
 }
 
-clean.doFirst {
-    println "Cleaning"
-	delete "${rootDir}/out"
+repositories {
+    mavenCentral()
 }
+
+configurations {
+    azuresf
+}
+
+dependencies {
+    compile project(':<%= interfaceProjName %>')
+    azuresf ('com.microsoft.azure.servicefabric:actors-preview:1.0.0')
+    compile fileTree(dir: 'lib', include: '*.jar')
+}
+
+task explodeDeps(type: Copy, dependsOn:configurations.azuresf) { task ->
+    configurations.azuresf.filter { it.toString().contains("native-preview") }.each{
+        from zipTree(it)
+    }
+    configurations.azuresf.filter { !it.toString().contains("native-preview") }.each {
+        from it
+    }
+    into "lib"
+    include "libj*.so", "*.jar"
+}
+
+compileJava.dependsOn(explodeDeps)
 
 jar 
 {
 	manifest {
+        def mpath = configurations.compile.collect {'lib/'+it.getName()}.join (' ')
+        mpath = mpath + ' ' + configurations.azuresf.collect {'lib/'+it.getName()}.join (' ')
     attributes(
 		'Main-Class': '<%= testClassFQN %>',
-		"Class-Path": configurations.compile.collect { 'lib/' + it.getName() }.join(' '))
+		"Class-Path": mpath)
 	baseName "<%= testClientJarName %>"
     destinationDir = file('./out/lib')
 	}
@@ -34,19 +58,9 @@ jar
 
 task copyDeps<< {
         copy {
-                from("<%= libPath %>")
+                from("lib/")
                 into("./out/lib/lib")
-                include('*.jar')
-        }
-        copy {
-                from("<%= libPath %>")
-                into("./out/lib/lib")
-                include('*.so')
-        }
-        copy {
-                from("<%= libPath %>")
-                into("./out/lib/lib")
-                include('*.dll')
+                include('*')
         }
         copy {
                 from("../<%= interfaceProjName %>/out/lib")
