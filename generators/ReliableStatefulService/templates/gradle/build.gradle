@@ -1,0 +1,72 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+     java.srcDirs = ['src']
+     output.classesDir = 'out/classes'
+      resources {
+       srcDirs = ['src']
+     }
+   }
+}
+
+
+clean.doFirst {
+    delete "${projectDir}/lib"
+    delete "${projectDir}/out"
+    delete "${projectDir}/../<%= appPackage %>/<%= servicePackage %>/Code/lib"
+    delete "${projectDir}/../<%= appPackage %>/<%= servicePackage %>/Code/<%= serviceJarName %>.jar"
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    azuresf
+}
+
+dependencies {
+    azuresf ('com.microsoft.servicefabric:sf-actors-preview:0.10.0')
+    compile fileTree(dir: 'lib', include: '*.jar')
+}
+
+task explodeDeps(type: Copy, dependsOn:configurations.azuresf) { task ->
+    configurations.azuresf.filter { it.toString().contains("native-preview") }.each{
+        from zipTree(it)
+    }
+    configurations.azuresf.filter { !it.toString().contains("native-preview") }.each {
+        from it
+    }
+    into "lib"
+    include "libj*.so", "*.jar"
+}
+
+compileJava.dependsOn(explodeDeps)
+
+jar {
+	manifest {
+        def mpath = configurations.azuresf.collect {'lib/'+it.getName()}.join (' ')
+    attributes(
+		'Main-Class': '<%= serviceMainClass %>',
+		"Class-Path": mpath)
+	baseName "<%= serviceJarName %>"
+    destinationDir = file('../<%= appPackage %>/<%= servicePackage %>/Code/')
+    }
+}
+
+task copyDeps<< {
+	copy {
+		from("lib/")
+		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+		include('*')
+	}
+}
+
+
+defaultTasks 'clean', 'jar', 'copyDeps'
+
+
+
+
