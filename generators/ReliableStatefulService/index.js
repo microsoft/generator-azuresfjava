@@ -107,7 +107,7 @@ var ClassGenerator = generators.Base.extend({
         libPath: this.libPath,
         appPackage: appPackage,
         servicePackage: servicePackage,
-        serviceMainClass: this.serviceMainClassFQN,
+        serviceMainClass: serviceMainClassFQN,
         serviceJarName: serviceJarName
       } 
     );
@@ -222,6 +222,7 @@ var ClassGenerator = generators.Base.extend({
     
     this.template('app/appPackage/servicePackage/Code/_readme.txt', path.join(appPackagePath, servicePackage, 'Code', '_readme.txt'));
     this.template('app/appPackage/servicePackage/Config/_readme.txt', path.join(appPackagePath, servicePackage, 'Config', '_readme.txt'));
+    this.template('app/appPackage/servicePackage/Config/Settings.xml', path.join(appPackagePath, servicePackage, 'Config', 'Settings.xml'));
     this.template('app/appPackage/servicePackage/Data/_readme.txt', path.join(appPackagePath, servicePackage, 'Data', '_readme.txt'));
   } 
 });

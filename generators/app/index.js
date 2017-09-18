@@ -32,7 +32,7 @@ var JavaGenerator = generators.Base.extend({
       , name: 'frameworkType'
       , message: 'Choose a framework for your service'
       , default: this.config.get('frameworkType')
-      , choices: ["Reliable Actor Service", "Reliable Stateless Service"]
+      , choices: ["Reliable Actor Service", "Reliable Stateless Service", "Reliable Stateful Service"]
       }];
 
     this.prompt(prompts, function (props) {
@@ -54,6 +54,10 @@ var JavaGenerator = generators.Base.extend({
     } else if (this.props.frameworkType == "Reliable Stateless Service") {
         this.composeWith('azuresfjava:ReliableStatelessService', {
             options: { libPath: libPath, isAddNewService: isAddNewService }
+        });
+    } else if (this.props.frameworkType == "Reliable Stateful Service") {
+        this.composeWith('azuresfjava:ReliableStatefulService', {
+           options: { libPath: libPath, isAddNewService: isAddNewService }
         });
     }
     },
