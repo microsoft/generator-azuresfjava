@@ -12,7 +12,7 @@ public class <%= serviceRunnerName %> {
 
     public static void main(String[] args) throws Exception {
         try {
-            ServiceRuntime.registerStatelessServiceAsync("<%= serviceTypeName %>", (context) -> new <%= serviceClassName %>(), Duration.ofSeconds(10));
+            ServiceRuntime.registerStatefulServiceAsync("<%= serviceTypeName %>", (context) -> new <%= serviceClassName %>(context), Duration.ofSeconds(10));
             logger.log(Level.INFO, "Registered stateless service of type <%= serviceTypeName %>. ");
             Thread.sleep(Long.MAX_VALUE);
         } catch (Exception ex) {

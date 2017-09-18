@@ -15,8 +15,8 @@
   <DataPackage Name="Data" Version="1.0.0" />
   <Resources>
         <Endpoints>
-            <Endpoint Name="<%= endpoint %>"/>
-            <Endpoint Name="<%= replicatorEndpoint %>" />
+            <Endpoint Name="ServiceEndPoint"/>
+            <Endpoint Name="ReplicatorEndpoint" />
         </Endpoints>
     </Resources>
  </ServiceManifest>

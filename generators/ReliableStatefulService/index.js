@@ -61,8 +61,15 @@ var ClassGenerator = generators.Base.extend({
     var appPackage = this.props.projName;
     var servicePackage = this.reliableServiceName + 'Pkg';
     var serviceProjName = this.reliableServiceName;
-    var serviceRunnerName = this.reliableServiceName + 'ServiceHost';
-    var serviceClassName = this.reliableServiceName + 'Service';
+    if (this.reliableServiceName.endsWith('Service')==true || this.reliableServiceName.endsWith('service')==true) {
+      var serviceRunnerName = this.reliableServiceName + 'Host';
+      var serviceClassName = this.reliableServiceName;
+      var serviceMainClassFQN =  this.serviceFQN + 'Host';
+    } else {
+      var serviceRunnerName = this.reliableServiceName + 'ServiceHost';
+      var serviceClassName = this.reliableServiceName + 'Service';      
+      var serviceMainClassFQN =  this.serviceFQN + 'ServiceHost';
+    }
     var serviceTypeName = this.reliableServiceName + 'Type';
     var serviceName = this.reliableServiceName;
     var appName = this.props.projName;
@@ -92,6 +99,7 @@ var ClassGenerator = generators.Base.extend({
       } 
     );
     
+  
     this.fs.copyTpl(
       this.templatePath('gradle/build.gradle'),
       this.destinationPath(path.join(serviceSrcPath, 'build.gradle')),
@@ -99,7 +107,7 @@ var ClassGenerator = generators.Base.extend({
         libPath: this.libPath,
         appPackage: appPackage,
         servicePackage: servicePackage,
-        serviceMainClass: this.serviceFQN + 'ServiceHost',
+        serviceMainClass: this.serviceMainClassFQN,
         serviceJarName: serviceJarName
       } 
     );
@@ -154,9 +162,10 @@ var ClassGenerator = generators.Base.extend({
               return console.log(err);
           }
           result['ApplicationManifest']['ServiceManifestImport'][result['ApplicationManifest']['ServiceManifestImport'].length] = 
-             {"ServiceManifestRef":[{"$":{"ServiceManifestName":servicePackage, "ServiceManifestVersion":"1.0.0"}}]}
+          {"ServiceManifestRef":[{"$":{"ServiceManifestName":servicePackage,"ServiceManifestVersion":"1.0.0"}}]}
           result['ApplicationManifest']['DefaultServices'][0]['Service'][result['ApplicationManifest']['DefaultServices'][0]['Service'].length] = 
-             {"$":{"Name":serviceName},"StatelessService":[{"$":{"ServiceTypeName":serviceTypeName,"InstanceCount":"1"},"SingletonPartition":[""]}]};
+          {"$":{"Name":serviceName},"StatefulService":[{"$":{"ServiceTypeName":serviceTypeName,"TargetReplicaSetSize":"3","MinReplicaSetSize":"3"},"UniformInt64Partition":[{"$":{"PartitionCount":"1","LowKey":"-9223372036854775808","HighKey":"9223372036854775807"}}]}]}; 
+
           var builder = new xml2js.Builder();
           var xml = builder.buildObject(result);
           fs.writeFile(path.join(appPackagePath, 'ApplicationManifest.xml'), xml, function(err) {
