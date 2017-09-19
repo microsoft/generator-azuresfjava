@@ -61,17 +61,21 @@ var ClassGenerator = generators.Base.extend({
     var appPackage = this.props.projName;
     var servicePackage = this.reliableServiceName + 'Pkg';
     var serviceProjName = this.reliableServiceName;
+
     if (this.reliableServiceName.endsWith('Service')==true || this.reliableServiceName.endsWith('service')==true) {
       var serviceRunnerName = this.reliableServiceName + 'Host';
       var serviceClassName = this.reliableServiceName;
       var serviceMainClassFQN =  this.serviceFQN + 'Host';
+      var serviceTypeName = this.reliableServiceName + 'Type';
+      var serviceName = this.reliableServiceName;      
     } else {
       var serviceRunnerName = this.reliableServiceName + 'ServiceHost';
       var serviceClassName = this.reliableServiceName + 'Service';      
       var serviceMainClassFQN =  this.serviceFQN + 'ServiceHost';
+      var serviceTypeName = this.reliableServiceName + 'ServiceType';
+      var serviceName = this.reliableServiceName + 'Service';      
     }
-    var serviceTypeName = this.reliableServiceName + 'Type';
-    var serviceName = this.reliableServiceName;
+
     var appName = this.props.projName;
     var appTypeName = this.props.projName + 'Type';
    
