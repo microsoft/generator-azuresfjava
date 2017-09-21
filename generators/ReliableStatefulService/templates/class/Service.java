@@ -35,31 +35,29 @@ public class <%= serviceClassName %> extends StatefulService {
     protected CompletableFuture<?> runAsync(CancellationToken cancellationToken) {
     // TODO: Replace the following sample code with your own logic 
     // or remove this runAsync override if it's not needed in your service.
-    ReliableHashMap<String> map = (ReliableHashMap<String>) stateManager.getOrAddAsync("mapName1").get();
-                while (true)
-                {
-                    cancellationToken.throwIfCancellationRequested();
-    
-                    try (Transaction tx = stateManager.CreateTransaction())
-                    {
-                        ConditionalValue<String> cv = map.getAsync(tx, "counter", Duration.ofSeconds(60)).get();
-                        
-                        if(cv.hasValue()) {
-                            System.out.println("The counter has value : " + cv.getValue());
-                            else {
-                                System.out.println("The counter key does not exist");
-                                map.putAsync(tx, counter, 2, Duration.ofSeconds(60)).get();
-                            }
-    
-                        // If an exception is thrown before calling CommitAsync, the transaction aborts, all changes are 
-                        // discarded, and nothing is saved to the secondary replicas.
-                        tx.commitAsync().get();
-                        tx.close();
-                    }
-    
-                    Thread.sleep(1);
+    Transaction tx = stateManager.createTransaction();
+    return this.stateManager.<String, Long>getOrAddReliableHashMapAsync(tx, "myHashMap").thenCompose((map) -> {
+        return map.computeAsync(tx, "counter", (k, v) -> {
+            if (v == null)
+                return 1L;
+            else
+                return ++v;
+        }, Duration.ofSeconds(4), cancellationToken).thenApply((l) -> {
+            return tx.commitAsync().handle((r, x) -> {
+                if (x != null) {
+                    logger.log(Level.SEVERE, x.getMessage());
                 }
-            }
-        }
+                try {
+                    tx.close();
+                } catch (Exception e) {
+                    System.out.println(x.getMessage());
+                    logger.log(Level.SEVERE, e.getMessage());
+                }
+                return null;
+            });
+        });
+    });
+
+    }
 }
 
