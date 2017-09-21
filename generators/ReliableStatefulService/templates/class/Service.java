@@ -1,22 +1,22 @@
 <% if (packageName) { %>package <%= packageName %>;<% } %>
 
-import java.util.concurrent.CompletableFuture;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import microsoft.servicefabric.data.ReliableStateManager;
 import microsoft.servicefabric.data.Transaction;
-import microsoft.servicefabric.data.collections.ReliableCollection;
-import microsoft.servicefabric.data.collections.ReliableHashMap;
 import microsoft.servicefabric.services.communication.runtime.ServiceReplicaListener;
 import microsoft.servicefabric.services.runtime.StatefulService;
 import system.fabric.CancellationToken;
 import system.fabric.StatefulServiceContext;
 
-import system.fabric.CancellationToken;
-
 public class <%= serviceClassName %> extends StatefulService {
     private ReliableStateManager stateManager;
+    private static final Logger logger = Logger.getLogger(<%= serviceClassName %>.class.getName());
     
     protected <%= serviceClassName %> (StatefulServiceContext statefulServiceContext, ReliableStateManager reliableStateManager) {
         super (statefulServiceContext);
@@ -50,7 +50,6 @@ public class <%= serviceClassName %> extends StatefulService {
                 try {
                     tx.close();
                 } catch (Exception e) {
-                    System.out.println(x.getMessage());
                     logger.log(Level.SEVERE, e.getMessage());
                 }
                 return null;
