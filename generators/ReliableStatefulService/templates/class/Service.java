@@ -18,9 +18,9 @@ public class <%= serviceClassName %> extends StatefulService {
     private ReliableStateManager stateManager;
     private static final Logger logger = Logger.getLogger(<%= serviceClassName %>.class.getName());
     
-    protected <%= serviceClassName %> (StatefulServiceContext statefulServiceContext, ReliableStateManager reliableStateManager) {
+    protected <%= serviceClassName %> (StatefulServiceContext statefulServiceContext) {
         super (statefulServiceContext);
-        this.stateManager = reliableStateManager;
+        this.stateManager = this.getReliableStateManager();
     }
 
     @Override
