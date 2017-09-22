@@ -13,7 +13,7 @@ public class <%= serviceRunnerName %> {
     public static void main(String[] args) throws Exception {
         try {
             ServiceRuntime.registerStatefulServiceAsync("<%= serviceTypeName %>", (context) -> new <%= serviceClassName %>(context), Duration.ofSeconds(10));
-            logger.log(Level.INFO, "Registered stateless service of type <%= serviceTypeName %>. ");
+            logger.log(Level.INFO, "Registered stateful service of type <%= serviceTypeName %>. ");
             Thread.sleep(Long.MAX_VALUE);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "Exception occured", ex);
