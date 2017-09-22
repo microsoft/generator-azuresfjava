@@ -36,7 +36,7 @@ public class <%= serviceClassName %> extends StatefulService {
     // TODO: Replace the following sample code with your own logic 
     // or remove this runAsync override if it's not needed in your service.
     Transaction tx = stateManager.createTransaction();
-    return this.stateManager.<String, Long>getOrAddReliableHashMapAsync(tx, "myHashMap").thenCompose((map) -> {
+    return this.stateManager.<String, Long>getOrAddReliableHashMapAsync("myHashMap").thenCompose((map) -> {
         return map.computeAsync(tx, "counter", (k, v) -> {
             if (v == null)
                 return 1L;
