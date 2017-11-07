@@ -33,30 +33,38 @@ public class <%= serviceClassName %> extends StatefulService {
 
     @Override
     protected CompletableFuture<?> runAsync(CancellationToken cancellationToken) {
-    // TODO: Replace the following sample code with your own logic 
-    // or remove this runAsync override if it's not needed in your service.
-    Transaction tx = stateManager.createTransaction();
-    return this.stateManager.<String, Long>getOrAddReliableHashMapAsync("myHashMap").thenCompose((map) -> {
+        // TODO: Replace the following sample code with your own logic
+        // or remove this runAsync override if it's not needed in your service.
+
+        Transaction tx = stateManager.createTransaction();
+        CompletableFuture<ReliableHashMap<String, Long>> mapTask = this.stateManager
+                .<String, Long>getOrAddReliableHashMapAsync("myHashMap");
+        return mapTask.thenCompose(
+                map -> computeValueAsync(map, tx, cancellationToken).thenApply(t -> commitAndCloseTransaction(tx)));
+    }
+
+    private CompletableFuture<Long> computeValueAsync(ReliableHashMap<String, Long> map, Transaction tx,
+            CancellationToken token) {
         return map.computeAsync(tx, "counter", (k, v) -> {
             if (v == null)
                 return 1L;
             else
                 return ++v;
-        }, Duration.ofSeconds(4), cancellationToken).thenApply((l) -> {
-            return tx.commitAsync().handle((r, x) -> {
-                if (x != null) {
-                    logger.log(Level.SEVERE, x.getMessage());
-                }
-                try {
-                    tx.close();
-                } catch (Exception e) {
-                    logger.log(Level.SEVERE, e.getMessage());
-                }
-                return null;
-            });
-        });
-    });
-
+        }, Duration.ofSeconds(4), token);
     }
+
+    private CompletableFuture<?> commitAndCloseTransaction(Transaction tx) {
+        return tx.commitAsync().handle((r, x) -> {
+            if (x != null) {
+                logger.log(Level.SEVERE, x.getMessage());
+            }
+            try {
+                tx.close();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, e.getMessage());
+            }
+            return null;
+        });
+    }    
 }
 
