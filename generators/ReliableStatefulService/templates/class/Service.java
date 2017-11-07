@@ -11,6 +11,7 @@ import microsoft.servicefabric.data.ReliableStateManager;
 import microsoft.servicefabric.data.Transaction;
 import microsoft.servicefabric.services.communication.runtime.ServiceReplicaListener;
 import microsoft.servicefabric.services.runtime.StatefulService;
+import microsoft.servicefabric.data.collections.ReliableHashMap;
 import system.fabric.CancellationToken;
 import system.fabric.StatefulServiceContext;
 
