@@ -40,8 +40,14 @@ public class <%= serviceClassName %> extends StatefulService {
         Transaction tx = stateManager.createTransaction();
         CompletableFuture<ReliableHashMap<String, Long>> mapTask = this.stateManager
                 .<String, Long>getOrAddReliableHashMapAsync("myHashMap");
-        return mapTask.thenCompose(
-                map -> computeValueAsync(map, tx, cancellationToken).thenApply(t -> commitAndCloseTransaction(tx)));
+
+        return mapTask.thenCompose((map) -> {
+            return computeValueAsync(map, tx, cancellationToken);
+        }).thenCompose((v) -> {
+            return commitTransaction(tx);
+        }).whenComplete((res, e) -> {
+            closeTransaction(tx);
+        });
     }
 
     private CompletableFuture<Long> computeValueAsync(ReliableHashMap<String, Long> map, Transaction tx,
@@ -54,18 +60,16 @@ public class <%= serviceClassName %> extends StatefulService {
         }, Duration.ofSeconds(4), token);
     }
 
-    private CompletableFuture<?> commitAndCloseTransaction(Transaction tx) {
-        return tx.commitAsync().handle((r, x) -> {
-            if (x != null) {
-                logger.log(Level.SEVERE, x.getMessage());
-            }
-            try {
-                tx.close();
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, e.getMessage());
-            }
-            return null;
-        });
-    }    
+    private CompletableFuture<?> commitTransaction(Transaction tx) {
+        return tx.commitAsync();
+    }
+
+    private void closeTransaction(Transaction tx) {
+        try {
+            tx.close();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getStackTrace().toString());
+        }
+    }
 }
 
