@@ -38,10 +38,10 @@ public class <%= serviceClassName %> extends StatefulService {
         // or remove this runAsync override if it's not needed in your service.
 
         Transaction tx = stateManager.createTransaction();
-        CompletableFuture<ReliableHashMap<String, Long>> mapTask = this.stateManager
+        CompletableFuture<ReliableHashMap<String, Long>> mapFuture = this.stateManager
                 .<String, Long>getOrAddReliableHashMapAsync("myHashMap");
 
-        return mapTask.thenCompose((map) -> {
+        return mapFuture.thenCompose((map) -> {
             return computeValueAsync(map, tx, cancellationToken);
         }).thenCompose((v) -> {
             return commitTransaction(tx);
@@ -50,7 +50,7 @@ public class <%= serviceClassName %> extends StatefulService {
         });
     }
 
-    private CompletableFuture<Long> computeValueAsync(ReliableHashMap<String, Long> map, Transaction tx,
+    private static CompletableFuture<Long> computeValueAsync(ReliableHashMap<String, Long> map, Transaction tx,
             CancellationToken token) {
         return map.computeAsync(tx, "counter", (k, v) -> {
             if (v == null)
@@ -60,15 +60,15 @@ public class <%= serviceClassName %> extends StatefulService {
         }, Duration.ofSeconds(4), token);
     }
 
-    private CompletableFuture<?> commitTransaction(Transaction tx) {
+    private static CompletableFuture<?> commitTransaction(Transaction tx) {
         return tx.commitAsync();
     }
 
-    private void closeTransaction(Transaction tx) {
+    private static void closeTransaction(Transaction tx) {
         try {
             tx.close();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getStackTrace().toString());
+            logger.log(Level.SEVERE, "Exception in closing transaction", e);
         }
     }
 }
