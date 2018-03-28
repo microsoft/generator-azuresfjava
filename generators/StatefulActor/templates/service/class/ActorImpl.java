@@ -5,12 +5,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import microsoft.servicefabric.actors.ActorServiceAttribute;
-import microsoft.servicefabric.actors.FabricActor;
-import microsoft.servicefabric.actors.StatePersistence;
-import microsoft.servicefabric.actors.StatePersistenceAttribute;
 import microsoft.servicefabric.actors.ActorId;
-import microsoft.servicefabric.actors.FabricActorService;
+import microsoft.servicefabric.actors.runtime.ActorServiceAttribute;
+import microsoft.servicefabric.actors.runtime.FabricActor;
+import microsoft.servicefabric.actors.runtime.StatePersistence;
+import microsoft.servicefabric.actors.runtime.StatePersistenceAttribute;
+import microsoft.servicefabric.actors.runtime.FabricActorService;
 
 /* 
 This class represents an actor.
