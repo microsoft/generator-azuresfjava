@@ -85,6 +85,24 @@ var ClassGenerator = generators.Base.extend({
     var serviceSrcPath = this.isAddNewService == false ? path.join(this.props.projName, serviceProjName) : serviceProjName ;
     var interfaceSrcPath = this.isAddNewService == false ? path.join(this.props.projName, interfaceProjName) : interfaceProjName;
     var testClientSrcPath = this.isAddNewService == false ? path.join(this.props.projName, testClientProjName) : testClientProjName;
+
+    var is_Windows = (process.platform=='win32');
+    var is_Linux = (process.platform=='linux');
+    var is_mac = (process.platform=='darwin');
+
+    var extension1;
+    var extension2;
+    
+    if(is_Windows)
+    {
+      extension1 = '.ps1';
+      extension2 = '.cmd';
+    }
+    else if(is_Linux){
+      extension1 = '.sh';
+      extension2 = '.sh';
+    }
+
     this.fs.copyTpl(
       this.templatePath('service/class/ActorImpl.java'),
       this.destinationPath(path.join(serviceSrcPath , 'src', this.dir, this.actorName + 'Impl.java')),
@@ -272,8 +290,17 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('main/deploy/install.sh'),
-        this.destinationPath(path.join(this.props.projName, 'install.sh')),
+        this.templatePath('main/deploy/install'+extension1),
+        this.destinationPath(path.join(this.props.projName, 'install'+extension1)),
+        {
+          appPackage: appPackage,
+          appName: appName,
+          appTypeName: appTypeName
+        } 
+      );
+      this.fs.copyTpl(
+        this.templatePath('main/deploy/preinstall'+extension1),
+        this.destinationPath(path.join(this.props.projName, 'preinstall'+extension1)),
         {
           appPackage: appPackage,
           appName: appName,
@@ -283,8 +310,8 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('main/deploy/uninstall.sh'),
-        this.destinationPath(path.join(this.props.projName, 'uninstall.sh')),
+        this.templatePath('main/deploy/uninstall'+extension1),
+        this.destinationPath(path.join(this.props.projName, 'uninstall'+extension1)),
         {
           appPackage: appPackage,
           appName: appName,
