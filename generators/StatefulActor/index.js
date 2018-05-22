@@ -86,21 +86,18 @@ var ClassGenerator = generators.Base.extend({
     var interfaceSrcPath = this.isAddNewService == false ? path.join(this.props.projName, interfaceProjName) : interfaceProjName;
     var testClientSrcPath = this.isAddNewService == false ? path.join(this.props.projName, testClientProjName) : testClientProjName;
 
-    var is_Windows = (process.platform=='win32');
-    var is_Linux = (process.platform=='linux');
-    var is_mac = (process.platform=='darwin');
+    var is_Windows = (process.platform == 'win32');
+    var is_Linux = (process.platform == 'linux');
+    var is_mac = (process.platform == 'darwin');
 
-    var extension1;
-    var extension2;
+    var sdkScriptExtension;
     
-    if(is_Windows)
+    if (is_Windows)
     {
-      extension1 = '.ps1';
-      extension2 = '.cmd';
+      sdkScriptExtension = '.ps1';
     }
-    else if(is_Linux){
-      extension1 = '.sh';
-      extension2 = '.sh';
+    else {
+      sdkScriptExtension = '.sh';
     }
 
     this.fs.copyTpl(
@@ -290,17 +287,8 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('main/deploy/install'+extension1),
-        this.destinationPath(path.join(this.props.projName, 'install'+extension1)),
-        {
-          appPackage: appPackage,
-          appName: appName,
-          appTypeName: appTypeName
-        } 
-      );
-      this.fs.copyTpl(
-        this.templatePath('main/deploy/preinstall'+extension1),
-        this.destinationPath(path.join(this.props.projName, 'preinstall'+extension1)),
+        this.templatePath('main/deploy/install'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'install'+sdkScriptExtension)),
         {
           appPackage: appPackage,
           appName: appName,
@@ -310,8 +298,8 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('main/deploy/uninstall'+extension1),
-        this.destinationPath(path.join(this.props.projName, 'uninstall'+extension1)),
+        this.templatePath('main/deploy/uninstall'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'uninstall'+sdkScriptExtension)),
         {
           appPackage: appPackage,
           appName: appName,

@@ -83,21 +83,18 @@ var ClassGenerator = generators.Base.extend({
     var serviceSrcPath = this.isAddNewService == false ? path.join(this.props.projName, serviceProjName) : serviceProjName ;
     var serviceJarName = (this.reliableServiceName).toLowerCase();
 
-    var is_Windows = (process.platform=='win32');
-    var is_Linux = (process.platform=='linux');
-    var is_mac = (process.platform=='darwin');
+    var is_Windows = (process.platform == 'win32');
+    var is_Linux = (process.platform == 'linux');
+    var is_mac = (process.platform == 'darwin');
 
-    var extension1;
-    var extension2;
+    var sdkScriptExtension;
     
     if(is_Windows)
     {
-      extension1 = '.ps1';
-      extension2 = '.cmd';
+      sdkScriptExtension = '.ps1';
     }
     else if(is_Linux){
-      extension1 = '.sh';
-      extension2 = '.sh';
+      sdkScriptExtension = '.sh';
     }
     
     this.fs.copyTpl(
@@ -216,8 +213,8 @@ var ClassGenerator = generators.Base.extend({
     );
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('deploy/install'+extension1),
-        this.destinationPath(path.join(this.props.projName, 'install'+extension1)),
+        this.templatePath('deploy/install'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'install'+sdkScriptExtension)),
         {
           appPackage: appPackage,
           appName: appName,
@@ -229,8 +226,8 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('deploy/uninstall'+extension1),
-        this.destinationPath(path.join(this.props.projName, 'uninstall'+extension1)),
+        this.templatePath('deploy/uninstall'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'uninstall'+sdkScriptExtension)),
         {
           appPackage: appPackage,
           appName: appName,
@@ -239,17 +236,7 @@ var ClassGenerator = generators.Base.extend({
           serviceTypeName: serviceTypeName
         } 
       );
-
-      if(is_Windows){
-        this.fs.copyTpl(
-          this.templatePath('deploy/preinstall.sh'),
-          this.destinationPath(path.join(this.props.projName, 'preinstall.sh')),
-          {
-          } 
-        );
-      }
     }
-    
     this.template('app/appPackage/servicePackage/Code/_readme.txt', path.join(appPackagePath, servicePackage, 'Code', '_readme.txt'));
     this.template('app/appPackage/servicePackage/Config/_readme.txt', path.join(appPackagePath, servicePackage, 'Config', '_readme.txt'));
     this.template('app/appPackage/servicePackage/Config/Settings.xml', path.join(appPackagePath, servicePackage, 'Config', 'Settings.xml'));
