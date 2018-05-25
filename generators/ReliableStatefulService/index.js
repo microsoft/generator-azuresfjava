@@ -84,16 +84,14 @@ var ClassGenerator = generators.Base.extend({
     var serviceJarName = (this.reliableServiceName).toLowerCase();
 
     var is_Windows = (process.platform == 'win32');
-    var is_Linux = (process.platform == 'linux');
-    var is_mac = (process.platform == 'darwin');
 
     var sdkScriptExtension;
     
-    if(is_Windows)
+    if (is_Windows)
     {
       sdkScriptExtension = '.ps1';
     }
-    else if(is_Linux){
+    else {
       sdkScriptExtension = '.sh';
     }
     
