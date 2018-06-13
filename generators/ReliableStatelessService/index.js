@@ -72,6 +72,20 @@ var ClassGenerator = generators.Base.extend({
     var serviceSrcPath = this.isAddNewService == false ? path.join(this.props.projName, serviceProjName) : serviceProjName ;
     var serviceJarName = (this.reliableServiceName).toLowerCase();
     
+    var is_Windows = (process.platform == 'win32');
+    var is_Linux = (process.platform == 'linux');
+    var is_mac = (process.platform == 'darwin');
+
+    var sdkScriptExtension;
+    
+    if(is_Windows)
+    {
+      sdkScriptExtension = '.ps1';
+    }
+    else {
+      sdkScriptExtension = '.sh';
+    }
+
     this.fs.copyTpl(
       this.templatePath('class/Service.java'),
       this.destinationPath(path.join(serviceSrcPath, 'src', this.dir, serviceClassName + '.java')),
@@ -186,8 +200,8 @@ var ClassGenerator = generators.Base.extend({
     );
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('deploy/install.sh'),
-        this.destinationPath(path.join(this.props.projName, 'install.sh')),
+        this.templatePath('deploy/install'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'install'+sdkScriptExtension)),
         {
           appPackage: appPackage,
           appName: appName,
@@ -199,8 +213,8 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
-        this.templatePath('deploy/uninstall.sh'),
-        this.destinationPath(path.join(this.props.projName, 'uninstall.sh')),
+        this.templatePath('deploy/uninstall'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'uninstall'+sdkScriptExtension)),
         {
           appPackage: appPackage,
           appName: appName,
