@@ -242,7 +242,8 @@ var ClassGenerator = generators.Base.extend({
       this.templatePath('testclient/testscripts/testclient.sh'),
       this.destinationPath(path.join(testClientSrcPath, 'testclient.sh')),
       {
-        testJar: testClientJarName
+        testJar: testClientJarName,
+        fabricCodePath: (is_mac ? "/home/FabricDrop/bin/Fabric/Fabric.Code" : "/opt/microsoft/servicefabric/bin/Fabric/Fabric.Code/")
       } 
     );
     
