@@ -299,6 +299,15 @@ var ClassGenerator = generators.Base.extend({
     }
     if ( this.isAddNewService == false ) {
       this.fs.copyTpl(
+        this.templatePath('main/deploy/upgrade'+sdkScriptExtension),
+        this.destinationPath(path.join(this.props.projName, 'upgrade'+sdkScriptExtension)),
+        {
+          appPackage: appPackage
+        } 
+      );
+    }
+    if ( this.isAddNewService == false ) {
+      this.fs.copyTpl(
         this.templatePath('main/deploy/uninstall'+sdkScriptExtension),
         this.destinationPath(path.join(this.props.projName, 'uninstall'+sdkScriptExtension)),
         {
