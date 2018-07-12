@@ -216,7 +216,8 @@ var ClassGenerator = generators.Base.extend({
         this.templatePath('deploy/upgrade'+sdkScriptExtension),
         this.destinationPath(path.join(this.props.projName, 'upgrade'+sdkScriptExtension)),
         {
-          appPackage: appPackage
+          appPackage: appPackage,
+          appName: appName
         } 
       );
     }
