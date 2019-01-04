@@ -4,7 +4,6 @@ apply plugin: 'eclipse'
 sourceSets {
   main {
      java.srcDirs = ['src']
-     output.classesDir = 'out/classes'
       resources {
        srcDirs = ['src']
      }
@@ -56,17 +55,19 @@ jar {
     destinationDir = file('../<%= appPackage %>/<%= servicePackage %>/Code')}
  }
 
- task copyDeps<< {
-	copy {
-		from("lib/")
-		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
-		include('*')
-	}
-	copy {
-		from("../<%= interfaceProjName %>/out/lib")
-		into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
-		include('*.jar')
-	}
+ task copyDeps{
+     doLast{
+        copy {
+            from("lib/")
+            into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+            include('*')
+        }
+        copy {
+            from("../<%= interfaceProjName %>/out/lib")
+            into("../<%= appPackage %>/<%= servicePackage %>/Code/lib")
+            include('*.jar')
+        }
+     }
 }
 
 
