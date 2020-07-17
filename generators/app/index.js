@@ -1,18 +1,18 @@
 'use strict';
 
-var path      = require('path')
-  , generators    = require('yeoman-generator')
-  , yosay     = require('yosay')
+var path = require('path');
+var yosay = require('yosay');
+const Generator = require('yeoman-generator');
 var isGuestUseCase = false;
-var JavaGenerator = generators.Base.extend({
-  constructor: function () {
-    generators.Base.apply(this, arguments);
+var JavaGenerator = class extends Generator{
+  constructor(args, opts) {
+    super(args, opts);
 
     this.desc('Generate Service Fabric java app template');
-  },
+  }
 
-  prompting: function () {
-    var done = this.async();
+  async prompting() {
+    
 
     this.log(yosay(
         'Welcome to Service Fabric java app generator'
@@ -20,31 +20,29 @@ var JavaGenerator = generators.Base.extend({
     
 
     var prompts = [{
-      type: 'input'
-    , name: 'projName'
-    , message: 'Name your application'
-    , default: this.config.get('projName')
-    , validate: function (input) {
+      type: 'input', 
+      name: 'projName', 
+      message: 'Name your application', 
+      default: this.config.get('projName'), 
+      validate: function (input) {
         return input ? true : false;
       }
     }, {
-      type: 'list'
-      , name: 'frameworkType'
-      , message: 'Choose a framework for your service'
-      , default: this.config.get('frameworkType')
+      type: 'list', 
+      name: 'frameworkType', 
+      message: 'Choose a framework for your service', 
+      default: this.config.get('frameworkType')
       , choices: ["Reliable Actor Service", "Reliable Stateless Service", "Reliable Stateful Service"]
       }];
 
-    this.prompt(prompts, function (props) {
-      this.props = props;
-      this.props.projName = this.props.projName.trim();
-      this.config.set(props);
+    await this.prompt(prompts).then(answer => {
+        answer.projName = answer.projName.trim();
+        this.props = answer;
+        this.config.set(answer);
+    });
+  }
 
-      done();
-    }.bind(this));
-  },
-
-  writing: function() {
+  writing() {
     var libPath = "REPLACE_SFLIBSPATH";
     var isAddNewService = false; 
     if (this.props.frameworkType == "Reliable Actor Service") {
@@ -60,9 +58,9 @@ var JavaGenerator = generators.Base.extend({
            options: { libPath: libPath, isAddNewService: isAddNewService }
         });
     }
-    },
+    }
   
-  end: function () {
+  end() {
     this.config.save();
     //this is for Add Service
     var nodeFs = require('fs');
@@ -70,7 +68,7 @@ var JavaGenerator = generators.Base.extend({
         nodeFs.createReadStream(path.join(this.destinationRoot(), '.yo-rc.json')).pipe(nodeFs.createWriteStream(path.join(this.destinationRoot(), this.props.projName, '.yo-rc.json')));
     }
   }
-});
+};
 
 module.exports = JavaGenerator;
 

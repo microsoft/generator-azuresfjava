@@ -1,12 +1,12 @@
 'use strict';
 
-var path      = require('path')
-, generators    = require('yeoman-generator')
-, yosay     = require('yosay')
+var path = require('path');
+var yosay = require('yosay');
+const Generator = require('yeoman-generator');
 
-var JavaGenerator = generators.Base.extend({
-    constructor: function () {
-        generators.Base.apply(this, arguments);
+var JavaGenerator = class extends Generator{
+    constructor(args, opts) {
+        super(args, opts);
 
         this.desc('Generate Service Fabric java app template');
         var chalk = require('chalk');
@@ -16,28 +16,25 @@ var JavaGenerator = generators.Base.extend({
             var err = chalk.red("Project name not found in .yo-rc.json. Exiting ..."); 
             throw err;
         }
-    },
+    }
 
-    prompting: function () {
-        var done = this.async();
+    async prompting() {
 
         var prompts = [{
-            type: 'list'
-            , name: 'frameworkType'
-            , message: 'Choose a framework for your service'
-            , default: this.config.get('frameworkType')
+            type: 'list', 
+            name: 'frameworkType', 
+            message: 'Choose a framework for your service', 
+            default: this.config.get('frameworkType')
             , choices: ["Reliable Actor Service", "Reliable Stateless Service", "Reliable Stateful Service"]
             }];
 
-            this.prompt(prompts, function (props) {
+        await this.prompt(prompts).then(props=>{
             this.props = props;
             this.config.set(props);
+        });
+    }
 
-            done();
-        }.bind(this));
-    },
-
-    writing: function() {
+    writing() {
         var libPath = "REPLACE_SFLIBSPATH";
         var isAddNewService = true; 
         if (this.props.frameworkType == "Reliable Actor Service") {
@@ -53,11 +50,11 @@ var JavaGenerator = generators.Base.extend({
                 options: { libPath: libPath, isAddNewService: isAddNewService }
             });
         }
-    },
-    end: function () {
+    }
+    end() {
         this.config.save();
     }
-});
+};
 
 module.exports = JavaGenerator;
 

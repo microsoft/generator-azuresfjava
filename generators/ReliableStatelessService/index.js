@@ -1,42 +1,45 @@
 'use strict';
 
-var path   = require('path')
-, generators = require('yeoman-generator');
+var path = require('path'), 
+generators = require('yeoman-generator');
+const Generator = require('yeoman-generator');
 
-var ClassGenerator = generators.Base.extend({
-  constructor: function () {
-    generators.Base.apply(this, arguments);
+var ClassGenerator = class extends Generator{
+  constructor(args, opts) {
+    super(args, opts);
     
     this.desc('Generate Reliable Stateless Service application template');
-    this.option('libPath', {
-      type: String
-      , required: true
-    });
-    this.option('isAddNewService', {
-      type: Boolean
-      , required: true
-    });
+    this.option('libPath', 
+      {
+        type: String, 
+        required: true
+      });
+    this.option('isAddNewService', 
+      {
+        type: Boolean, 
+        required: true
+      });
     this.libPath = this.options.libPath;
     this.isAddNewService = this.options.isAddNewService;
   
-  },
+  }
   
-  prompting: function () {
-    var done = this.async();
+  async prompting() {
+
     var utility = require('../utility');
     var prompts = [{
-      type: 'input'
-      , name: 'serviceFQN'
-      , message: 'Enter the name of Reliable Stateless Service : '
-      , validate: function (input) {
+      type: 'input', 
+      name: 'serviceFQN', 
+      message: 'Enter the name of Reliable Stateless Service : ', 
+      validate: function (input) {
         return input ? utility.validateFQN(input) : false;
       }
     }];
     
-    this.prompt(prompts, function(input) {
+    await this.prompt(prompts).then((input) => {
       this.serviceFQN = input.serviceFQN;
-      var parts = this.serviceFQN.split('.')
-      , name  = parts.pop();
+      var parts = this.serviceFQN.split('.'), 
+      name  = parts.pop();
       this.packageName = parts.join('.');
       this.dir = parts.join('/');
       this.reliableServiceName = utility.capitalizeFirstLetter(name.trim());
@@ -46,18 +49,17 @@ var ClassGenerator = generators.Base.extend({
         this.serviceFQN = "statelessservice." + this.serviceFQN;
         this.dir = this.dir + "/statelessservice";
       }
-      done();
-    }.bind(this));
-  },
+    });
+  }
   
-  initializing: function () {
+  initializing() {
     this.props = this.config.getAll();
     this.config.defaults({
       author: '<your name>'
     });
-  },
+  }
   
-  writing: function () {
+  writing() {
     var appPackage = this.props.projName;
     var servicePackage = this.reliableServiceName + 'Pkg';
     var serviceProjName = this.reliableServiceName;
@@ -234,11 +236,34 @@ var ClassGenerator = generators.Base.extend({
         } 
       );
     }
-    
-    this.template('app/appPackage/servicePackage/Code/_readme.txt', path.join(appPackagePath, servicePackage, 'Code', '_readme.txt'));
-    this.template('app/appPackage/servicePackage/Config/_readme.txt', path.join(appPackagePath, servicePackage, 'Config', '_readme.txt'));
-    this.template('app/appPackage/servicePackage/Data/_readme.txt', path.join(appPackagePath, servicePackage, 'Data', '_readme.txt'));
+
+    this.fs.copyTpl(
+      this.templatePath(
+        "app/appPackage/servicePackage/Code/_readme.txt"
+      ),
+      this.destinationPath(
+        path.join(appPackagePath, servicePackage, 'Code', '_readme.txt')
+      )
+    );
+
+    this.fs.copyTpl(
+      this.templatePath(
+        "app/appPackage/servicePackage/Config/_readme.txt"
+      ),
+      this.destinationPath(
+        path.join(appPackagePath, servicePackage, 'Config', '_readme.txt')
+      )
+    );
+
+    this.fs.copyTpl(
+      this.templatePath(
+        "app/appPackage/servicePackage/Data/_readme.txt"
+      ),
+      this.destinationPath(
+        path.join(appPackagePath, servicePackage, 'Data', '_readme.txt')
+      )
+    );
   } 
-});
+};
 
 module.exports = ClassGenerator;
