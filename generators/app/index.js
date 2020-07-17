@@ -1,8 +1,7 @@
 'use strict';
 
-var path      = require('path')
-  , generators    = require('yeoman-generator')
-  , yosay     = require('yosay');
+var path = require('path');
+var yosay = require('yosay');
 const Generator = require('yeoman-generator');
 var isGuestUseCase = false;
 var JavaGenerator = class extends Generator{
@@ -21,18 +20,18 @@ var JavaGenerator = class extends Generator{
     
 
     var prompts = [{
-      type: 'input'
-    , name: 'projName'
-    , message: 'Name your application'
-    , default: this.config.get('projName')
-    , validate: function (input) {
+      type: 'input', 
+      name: 'projName', 
+      message: 'Name your application', 
+      default: this.config.get('projName'), 
+      validate: function (input) {
         return input ? true : false;
       }
     }, {
-      type: 'list'
-      , name: 'frameworkType'
-      , message: 'Choose a framework for your service'
-      , default: this.config.get('frameworkType')
+      type: 'list', 
+      name: 'frameworkType', 
+      message: 'Choose a framework for your service', 
+      default: this.config.get('frameworkType')
       , choices: ["Reliable Actor Service", "Reliable Stateless Service", "Reliable Stateful Service"]
       }];
 

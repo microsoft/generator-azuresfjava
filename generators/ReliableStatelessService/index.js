@@ -1,7 +1,7 @@
 'use strict';
 
-var path   = require('path')
-, generators = require('yeoman-generator');
+var path = require('path'), 
+generators = require('yeoman-generator');
 const Generator = require('yeoman-generator');
 
 var ClassGenerator = class extends Generator{
@@ -9,14 +9,16 @@ var ClassGenerator = class extends Generator{
     super(args, opts);
     
     this.desc('Generate Reliable Stateless Service application template');
-    this.option('libPath', {
-      type: String
-      , required: true
-    });
-    this.option('isAddNewService', {
-      type: Boolean
-      , required: true
-    });
+    this.option('libPath', 
+      {
+        type: String, 
+        required: true
+      });
+    this.option('isAddNewService', 
+      {
+        type: Boolean, 
+        required: true
+      });
     this.libPath = this.options.libPath;
     this.isAddNewService = this.options.isAddNewService;
   
@@ -26,18 +28,18 @@ var ClassGenerator = class extends Generator{
 
     var utility = require('../utility');
     var prompts = [{
-      type: 'input'
-      , name: 'serviceFQN'
-      , message: 'Enter the name of Reliable Stateless Service : '
-      , validate: function (input) {
+      type: 'input', 
+      name: 'serviceFQN', 
+      message: 'Enter the name of Reliable Stateless Service : ', 
+      validate: function (input) {
         return input ? utility.validateFQN(input) : false;
       }
     }];
     
     await this.prompt(prompts).then((input) => {
       this.serviceFQN = input.serviceFQN;
-      var parts = this.serviceFQN.split('.')
-      , name  = parts.pop();
+      var parts = this.serviceFQN.split('.'), 
+      name  = parts.pop();
       this.packageName = parts.join('.');
       this.dir = parts.join('/');
       this.reliableServiceName = utility.capitalizeFirstLetter(name.trim());

@@ -1,7 +1,6 @@
 'use strict';
 
-var path   = require('path')
-, generators = require('yeoman-generator');
+var path = require('path');
 const Generator = require('yeoman-generator');
 
 var ClassGenerator = class extends Generator{
@@ -10,12 +9,12 @@ var ClassGenerator = class extends Generator{
     
     this.desc('Generate Reliable actor application template');
     this.option('libPath', {
-      type: String
-      , required: true
+      type: String, 
+      required: true
     });
     this.option('isAddNewService', {
-      type: Boolean
-      , required: true
+      type: Boolean, 
+      required: true
     });
     this.libPath = this.options.libPath;
     this.isAddNewService = this.options.isAddNewService;
@@ -25,18 +24,18 @@ var ClassGenerator = class extends Generator{
   async prompting() {
     var utility = require('../utility');
     var prompts = [{
-      type: 'input'
-      , name: 'actorFQN'
-      , message: 'Enter the name of actor service : '
-      , validate: function (input) {
+      type: 'input', 
+      name: 'actorFQN', 
+      message: 'Enter the name of actor service : ', 
+      validate: function (input) {
         return input ? utility.validateFQN(input) : false;
       }
     }];
     
     await this.prompt(prompts).then((input) => {
       this.actorFQN = input.actorFQN;
-      var parts = this.actorFQN.split('.')
-      , name  = parts.pop();
+      var parts = this.actorFQN.split('.'), 
+      name  = parts.pop();
       this.packageName = parts.join('.');
       this.dir = parts.join('/');
       this.actorName = utility.capitalizeFirstLetter(name.trim());
@@ -159,7 +158,7 @@ var ClassGenerator = class extends Generator{
           if (err) {
               return console.log(err);
           }
-           result['ApplicationManifest']['ServiceManifestImport'][result['ApplicationManifest']['ServiceManifestImport'].length] = 
+          result['ApplicationManifest']['ServiceManifestImport'][result['ApplicationManifest']['ServiceManifestImport'].length] = 
               {"ServiceManifestRef":[{"$":{"ServiceManifestName":servicePackage,"ServiceManifestVersion":"1.0.0"}}]}
           result['ApplicationManifest']['DefaultServices'][0]['Service'][result['ApplicationManifest']['DefaultServices'][0]['Service'].length] = 
               {"$":{"Name":serviceName},"StatefulService":[{"$":{"ServiceTypeName":serviceTypeName,"TargetReplicaSetSize":"3","MinReplicaSetSize":"3"},"UniformInt64Partition":[{"$":{"PartitionCount":"1","LowKey":"-9223372036854775808","HighKey":"9223372036854775807"}}]}]};
