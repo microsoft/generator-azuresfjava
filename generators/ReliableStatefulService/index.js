@@ -1,9 +1,9 @@
 'use strict';
 
 var path   = require('path')
-, generators = require('yeoman-generator');
+Generator = require('yeoman-generator')
 
-var ClassGenerator = generators.Base.extend({
+var ClassGenerator = class extends Generator({
   constructor: function () {
     generators.Base.apply(this, arguments);
     

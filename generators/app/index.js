@@ -1,10 +1,10 @@
 'use strict';
 
 var path      = require('path')
-  , generators    = require('yeoman-generator')
+  , Generator    = require('yeoman-generator')
   , yosay     = require('yosay')
 var isGuestUseCase = false;
-var JavaGenerator = generators.Base.extend({
+var JavaGenerator = class extends Generator({
   constructor: function () {
     generators.Base.apply(this, arguments);
 
