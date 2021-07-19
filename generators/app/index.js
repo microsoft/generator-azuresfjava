@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
 var path      = require('path')
   , Generator    = require('yeoman-generator')
   , yosay     = require('yosay')
 var isGuestUseCase = false;
-var JavaGenerator = class extends Generator({
-  constructor: function () {
-    generators.Base.apply(this, arguments);
+var JavaGenerator = class extends Generator{
+  constructor(args, opts) {
+    super(args, opts);
 
     this.desc('Generate Service Fabric java app template');
-  },
+  }
 
-  prompting: function () {
-    var done = this.async();
+  async prompting() {
+    // var done = this.async();
 
     this.log(yosay(
         'Welcome to Service Fabric java app generator'
@@ -35,16 +35,16 @@ var JavaGenerator = class extends Generator({
       , choices: ["Reliable Actor Service", "Reliable Stateless Service", "Reliable Stateful Service"]
       }];
 
-    this.prompt(prompts, function (props) {
+    await this.prompt(prompts).then(props => {
       this.props = props;
       this.props.projName = this.props.projName.trim();
       this.config.set(props);
 
-      done();
-    }.bind(this));
-  },
+      // done();
+    });
+  }
 
-  writing: function() {
+  writing() {
     var libPath = "REPLACE_SFLIBSPATH";
     var isAddNewService = false; 
     if (this.props.frameworkType == "Reliable Actor Service") {
@@ -60,9 +60,9 @@ var JavaGenerator = class extends Generator({
            options: { libPath: libPath, isAddNewService: isAddNewService }
         });
     }
-    },
+  }
   
-  end: function () {
+  end() {
     this.config.save();
     //this is for Add Service
     var nodeFs = require('fs');
@@ -70,7 +70,6 @@ var JavaGenerator = class extends Generator({
         nodeFs.createReadStream(path.join(this.destinationRoot(), '.yo-rc.json')).pipe(nodeFs.createWriteStream(path.join(this.destinationRoot(), this.props.projName, '.yo-rc.json')));
     }
   }
-});
+};
 
 module.exports = JavaGenerator;
-
