@@ -1,11 +1,11 @@
 'use strict';
 
 var path   = require('path')
-, generators = require('yeoman-generator');
+, Generator = require('yeoman-generator');
 
-var ClassGenerator = generators.Base.extend({
-  constructor: function () {
-    generators.Base.apply(this, arguments);
+var ClassGenerator = class extends Generator{
+  constructor(args, opts) {
+    super(args, opts);
     
     this.desc('Generate Reliable actor application template');
     this.option('libPath', {
@@ -19,10 +19,10 @@ var ClassGenerator = generators.Base.extend({
     this.libPath = this.options.libPath;
     this.isAddNewService = this.options.isAddNewService;
   
-  },
+  }
   
-  prompting: function () {
-    var done = this.async();
+  async prompting() {
+    // var done = this.async();
     var utility = require('../utility');
     var prompts = [{
       type: 'input'
@@ -33,8 +33,8 @@ var ClassGenerator = generators.Base.extend({
       }
     }];
     
-    this.prompt(prompts, function(input) {
-      this.actorFQN = input.actorFQN;
+    await this.prompt(prompts).then(answers => {
+      this.actorFQN = answers.actorFQN;
       var parts = this.actorFQN.split('.')
       , name  = parts.pop();
       this.packageName = parts.join('.');
@@ -46,18 +46,17 @@ var ClassGenerator = generators.Base.extend({
         this.actorFQN = "reliableactor." + this.actorFQN;
         this.dir = this.dir + "/reliableactor";
       }
-      done();
-    }.bind(this));
-  },
+    })
+  }
   
-  initializing: function () {
-  this.props = this.config.getAll();
-  this.config.defaults({
-  author: '<your name>'
-  });
-  },
+  initializing() {
+    this.props = this.config.getAll();
+    this.config.defaults({
+    author: '<your name>'
+    });
+  }
   
-  writing: function () {
+  writing() {
     var interfaceProjName = this.actorName + 'Interface';
     var serviceProjName = this.actorName;
     var testClientProjName = this.actorName + 'TestClient';
@@ -319,10 +318,19 @@ var ClassGenerator = generators.Base.extend({
       );
     }
     
-    this.template('service/app/appPackage/servicePackage/Code/_readme.txt', path.join(appPackagePath, servicePackage, 'Code', '_readme.txt'));
-    this.template('service/app/appPackage/servicePackage/Config/_readme.txt', path.join(appPackagePath, servicePackage, 'Config', '_readme.txt'));
-    this.template('service/app/appPackage/servicePackage/Data/_readme.txt', path.join(appPackagePath, servicePackage, 'Data', '_readme.txt'));
-  } 
-});
+    this.fs.copyTpl(
+      this.templatePath('service/app/appPackage/servicePackage/Code/_readme.txt')
+      , this.destinationPath(path.join(appPackagePath, servicePackage, 'Code', '_readme.txt'))
+    );
+    this.fs.copyTpl(
+      this.templatePath('service/app/appPackage/servicePackage/Config/_readme.txt')
+      , this.destinationPath(path.join(appPackagePath, servicePackage, 'Config', '_readme.txt'))
+    );
+    this.fs.copyTpl(
+      this.templatePath('service/app/appPackage/servicePackage/Data/_readme.txt')
+      , this.destinationPath(path.join(appPackagePath, servicePackage, 'Data', '_readme.txt'))
+    );
+  }
+};
 
 module.exports = ClassGenerator;
